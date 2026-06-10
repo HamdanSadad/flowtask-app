@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  DONE
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model User {
+  id            String            @id @default(uuid())
+  name          String
+  email         String            @unique
+  password_hash String?
+  provider      String            @default("local")
+  role          Role              @default(USER)
+  created_at    DateTime          @default(now())
+  updated_at    DateTime          @updatedAt
+  projects      Project[]
+  tasks         Task[]
+  activities    ActivityHistory[]
+}
+
+model Project {
+  id         String   @id @default(uuid())
+  name       String
+  color      String?
+  icon       String?
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tasks      Task[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Task {
+  id           String            @id @default(uuid())
+  title        String
+  description  String?
+  status       TaskStatus        @default(PENDING)
+  priority     TaskPriority      @default(MEDIUM)
+  deadline     DateTime?
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+  completed_at DateTime?
+  user_id      String
+  user         User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  project_id   String?
+  project      Project?          @relation(fields: [project_id], references: [id], onDelete: SetNull)
+  activities   ActivityHistory[]
+}
+
+model ActivityHistory {
+  id        String   @id @default(uuid())
+  user_id   String
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  task_id   String?
+  task      Task?    @relation(fields: [task_id], references: [id], onDelete: SetNull)
+  type      String   // created, updated, deleted, status_changed, login, logout
+  detail    String?  // JSON string or brief text
+  timestamp DateTime @default(now())
+}
+
+model AppConfig {
+  id    String @id @default(uuid())
+  key   String @unique
+  value String // JSON string
+}

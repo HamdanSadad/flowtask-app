@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import toast from 'react-hot-toast';
 import { CheckSquare, Mail, Lock, User as UserIcon, ArrowRight, ArrowLeft } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+
 
 const Register = () => {
   const [name, setName] = useState('');

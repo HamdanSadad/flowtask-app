@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useProjects } from '../context/ProjectContext';
 import { 
-  LayoutDashboard, CheckSquare, Clock, Settings, LogOut, Plus, Menu, X, Edit2,
+  LayoutDashboard, CheckSquare, Clock, Settings, LogOut, Plus, Menu, X, Edit2, Calendar, Layout,
   Folder, Briefcase, GraduationCap, Dumbbell, Coffee, Pizza, Book, Terminal, Music, Globe, Heart, Activity, Code, PenTool, Flame
 } from 'lucide-react';
 
@@ -26,6 +26,8 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
   const navigation = [
     { name: 'Dashboard', href: '/app/dashboard', icon: LayoutDashboard },
+    { name: 'Kanban Board', href: '/app/board', icon: Layout },
+    { name: 'Calendar', href: '/app/calendar', icon: Calendar },
     { name: 'History', href: '/app/history', icon: Clock },
     ...(user?.role === 'ADMIN' ? [{ name: 'Admin Panel', href: '/admin', icon: Settings }] : []),
   ];
@@ -117,7 +119,7 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
               return (
               <div key={project.id} className="group flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-gray-600 hover:bg-gray-50 hover:text-gray-900">
                 <Link
-                  to={`/app/dashboard?project=${project.id}`}
+                  to={`/app/project/${project.id}`}
                   onClick={() => setIsSidebarOpen(false)}
                   className="flex items-center gap-3 flex-1 overflow-hidden"
                 >

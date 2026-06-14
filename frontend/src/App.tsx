@@ -8,6 +8,9 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Board from './pages/Board';
+import CalendarView from './pages/CalendarView';
+import ProjectDetail from './pages/ProjectDetail';
 import History from './pages/History';
 import Admin from './pages/Admin';
 
@@ -35,6 +38,21 @@ const AppRoutes = () => {
         <Route path="/app/dashboard" element={
           <ProtectedRoute>
             <PageTransition><Dashboard /></PageTransition>
+          </ProtectedRoute>
+        } />
+        <Route path="/app/project/:id" element={
+          <ProtectedRoute>
+            <PageTransition><ProjectDetail /></PageTransition>
+          </ProtectedRoute>
+        } />
+        <Route path="/app/board" element={
+          <ProtectedRoute>
+            <PageTransition><Board /></PageTransition>
+          </ProtectedRoute>
+        } />
+        <Route path="/app/calendar" element={
+          <ProtectedRoute>
+            <PageTransition><CalendarView /></PageTransition>
           </ProtectedRoute>
         } />
         <Route path="/app/history" element={

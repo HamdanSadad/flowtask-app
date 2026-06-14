@@ -18,7 +18,7 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
 export const createTask = async (req: Request, res: Response): Promise<void> => {
   try {
     const { userId } = (req as any).user;
-    const { title, description, priority, deadline, project_id } = req.body;
+    const { title, description, priority, status, deadline, start_date, labels, project_id } = req.body;
 
     if (!title) {
       res.status(400).json({ error: 'Title is required' });
@@ -41,7 +41,10 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
         title,
         description,
         priority: priority || 'MEDIUM',
+        status: status || 'BACKLOG',
         deadline: deadline ? new Date(deadline) : null,
+        start_date: start_date ? new Date(start_date) : null,
+        labels: Array.isArray(labels) ? labels : [],
         project_id: project_id || null,
         user_id: userId,
       },
@@ -68,7 +71,7 @@ export const updateTask = async (req: Request, res: Response): Promise<void> => 
   try {
     const { userId } = (req as any).user;
     const id = req.params.id as string;
-    const { title, description, status, priority, deadline, project_id } = req.body;
+    const { title, description, status, priority, deadline, start_date, labels, project_id } = req.body;
 
     // Security validation
     const safeRegex = /^[a-zA-Z0-9\s.,!?\-_()]+$/;
@@ -89,6 +92,8 @@ export const updateTask = async (req: Request, res: Response): Promise<void> => 
 
     const updateData: any = { title, description, priority };
     if (deadline !== undefined) updateData.deadline = deadline ? new Date(deadline) : null;
+    if (start_date !== undefined) updateData.start_date = start_date ? new Date(start_date) : null;
+    if (labels !== undefined) updateData.labels = Array.isArray(labels) ? labels : [];
     if (project_id !== undefined) updateData.project_id = project_id || null;
     
     let statusChanged = false;

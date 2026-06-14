@@ -12,6 +12,7 @@ enum Role {
 }
 
 enum TaskStatus {
+  BACKLOG
   PENDING
   IN_PROGRESS
   DONE
@@ -56,6 +57,8 @@ model Task {
   status       TaskStatus        @default(PENDING)
   priority     TaskPriority      @default(MEDIUM)
   deadline     DateTime?
+  start_date   DateTime?
+  labels       String[]          @default([])
   created_at   DateTime          @default(now())
   updated_at   DateTime          @updatedAt
   completed_at DateTime?

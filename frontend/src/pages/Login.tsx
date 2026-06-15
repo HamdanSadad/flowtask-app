@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../lib/api';
 import toast from 'react-hot-toast';
-import { CheckSquare, Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { CheckSquare, Mail, Lock, ArrowRight, ArrowLeft, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showRegisterPrompt, setShowRegisterPrompt] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -23,7 +25,14 @@ const Login = () => {
       toast.success('Welcome back!');
       navigate('/app/dashboard');
     } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Login failed');
+      const errorMessage = error.response?.data?.error || 'Login failed';
+      
+      // Jika errornya dari backend lama (Invalid credentials) atau backend baru (Akun tidak ditemukan)
+      if (errorMessage.includes('Akun tidak ditemukan') || errorMessage === 'Invalid credentials') {
+        setShowRegisterPrompt(true);
+      } else {
+        toast.error(errorMessage);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -153,6 +162,47 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      {/* Custom Popup Modal for Unregistered User */}
+      <AnimatePresence>
+        {showRegisterPrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl flex flex-col items-center text-center border border-gray-100 mx-auto"
+            >
+              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-inner">
+                <AlertCircle size={32} className="sm:w-10 sm:h-10" strokeWidth={1.5} />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">Akun Belum Terdaftar</h3>
+              <p className="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8 leading-relaxed">
+                Email <span className="font-semibold text-gray-700">{email}</span> belum terdaftar di sistem kami. Silakan buat akun terlebih dahulu untuk melanjutkan.
+              </p>
+              <div className="flex flex-col gap-3 w-full">
+                <button
+                  onClick={() => navigate('/register')}
+                  className="w-full bg-primary text-white py-3.5 rounded-xl font-semibold hover:bg-primary-hover hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                >
+                  Daftar Sekarang
+                </button>
+                <button
+                  onClick={() => setShowRegisterPrompt(false)}
+                  className="w-full py-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-800 rounded-xl font-medium transition-colors"
+                >
+                  Coba Email Lain
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

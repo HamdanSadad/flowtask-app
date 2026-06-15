@@ -185,9 +185,9 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Mobile Header */}
-        <div className="md:hidden h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-10">
+        <div className="md:hidden h-16 shrink-0 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-10">
            <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-gray-600 hover:bg-gray-50 rounded-lg">
              <Menu size={24} />
            </button>

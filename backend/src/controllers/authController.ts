@@ -14,7 +14,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      res.status(400).json({ error: 'Email already exists' });
+      res.status(400).json({ error: 'Email ini sudah terdaftar. Silakan login.' });
       return;
     }
 
@@ -47,14 +47,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user || !user.password_hash) {
-      res.status(401).json({ error: 'Invalid credentials' });
+    if (!user) {
+      res.status(401).json({ error: 'Akun tidak ditemukan. Silakan daftar terlebih dahulu.' });
+      return;
+    }
+    
+    if (!user.password_hash) {
+      res.status(401).json({ error: 'Akun ini menggunakan metode login lain.' });
       return;
     }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-      res.status(401).json({ error: 'Invalid credentials' });
+      res.status(401).json({ error: 'Password salah.' });
       return;
     }
 
